@@ -1,5 +1,6 @@
 # surf_laynii
 Script that enables LAYNII layering using Freesurfer segmentations
+You may need to run `chmod +x surf_laynii` to make it an executable.
 
 ### Example use
 
