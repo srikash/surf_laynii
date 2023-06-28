@@ -20,7 +20,7 @@ Input arguments:
 
     -n: Resolution in mm (Specify as float. 0.3 (default). )
 
-    -p: Expand factor (Specify a positive value. 1.2 (default).)
+    -p: Expand factor (Specify a positive value. 0.2 (default).)
 
     -m: Shrink factor (Specify a negative value. -0.4 (default).)
 
@@ -74,7 +74,7 @@ fi
 
 # DEFAULTS
 newvox=0.3
-expand_factor=1.1
+expand_factor=0.2
 shrink_factor=-0.4
 
 # PARSE INPUT ARGUMENTS
