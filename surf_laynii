@@ -161,11 +161,13 @@ echo " ++++ Generating new boundary surfaces ..."
 echo "   -> Patience .... "
 for hemi in {lh,rh}; do
 
-    orig_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.white"
+    white_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.white"
 
-    csfb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_csfb"
+    pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.white"
 
-    ogmb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_ogmb"
+    csfb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.pial_expand_csfb"
+
+    ogmb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.pial_expand_ogmb"
 
     wmb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_shrink_wmb"
 
@@ -174,8 +176,8 @@ for hemi in {lh,rh}; do
     if [[ ! -f "${csfb_surf}" ]]; then
         # Run mris_expand for each input file
         start_time=$(date +%s)
-        mris_expand -thickness "$orig_surf" $expand_factor "$csfb_surf" >/dev/null 2>&1
-        echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_csfb""
+        mris_expand -thickness "$pial_surf" $expand_factor "$csfb_surf" >/dev/null 2>&1
+        echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.pial_expand_csfb""
         end_time=$(date +%s)
         echo "      Finished in $((end_time - start_time)) seconds"
 
@@ -184,15 +186,15 @@ for hemi in {lh,rh}; do
     if [[ ! -f "${ogmb_surf}" ]]; then
         expand_factor_in=$(echo "scale=2; $expand_factor - 0.1" | bc)
         start_time=$(date +%s)
-        mris_expand -thickness "$orig_surf" "$expand_factor_in" "$ogmb_surf" >/dev/null 2>&1
-        echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_ogmb""
+        mris_expand -thickness "$pial_surf" "$expand_factor_in" "$ogmb_surf" >/dev/null 2>&1
+        echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.pial_expand_ogmb""
         end_time=$(date +%s)
         echo "      Finished in $((end_time - start_time)) seconds"
     fi
 
     if [[ ! -f "${wmb_surf}" ]]; then
         start_time=$(date +%s)
-        mris_expand -thickness "$orig_surf" $shrink_factor "$wmb_surf" >/dev/null 2>&1
+        mris_expand -thickness "$white_surf" $shrink_factor "$wmb_surf" >/dev/null 2>&1
         echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_wmb""
         end_time=$(date +%s)
         echo "      Finished in $((end_time - start_time)) seconds"
@@ -202,7 +204,7 @@ for hemi in {lh,rh}; do
     if [[ ! -f "${igmb_surf}" ]]; then
         shrink_factor_in=$(echo "scale=2; $shrink_factor + 0.1" | bc)
         start_time=$(date +%s)
-        mris_expand -thickness "$orig_surf" "$shrink_factor_in" "$igmb_surf" >/dev/null 2>&1
+        mris_expand -thickness "$white_surf" "$shrink_factor_in" "$igmb_surf" >/dev/null 2>&1
         echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_igmb""
         end_time=$(date +%s)
         echo "      Finished in $((end_time - start_time)) seconds"
@@ -213,10 +215,10 @@ done
 echo " ++++ Generating new boundary volumes ..."
 # Define the input and output paths for mris_fill
 boundary_surfs=(
-    "${fs_subj_dir}/${subj_id}/laynii/lh.white_expand_csfb"
-    "${fs_subj_dir}/${subj_id}/laynii/rh.white_expand_csfb"
-    "${fs_subj_dir}/${subj_id}/laynii/lh.white_expand_ogmb"
-    "${fs_subj_dir}/${subj_id}/laynii/rh.white_expand_ogmb"
+    "${fs_subj_dir}/${subj_id}/laynii/lh.pial_expand_csfb"
+    "${fs_subj_dir}/${subj_id}/laynii/rh.pial_expand_csfb"
+    "${fs_subj_dir}/${subj_id}/laynii/lh.pial_expand_ogmb"
+    "${fs_subj_dir}/${subj_id}/laynii/rh.pial_expand_ogmb"
     "${fs_subj_dir}/${subj_id}/laynii/lh.white_shrink_wmb"
     "${fs_subj_dir}/${subj_id}/laynii/rh.white_shrink_wmb"
     "${fs_subj_dir}/${subj_id}/laynii/lh.white_shrink_igmb"
@@ -224,10 +226,10 @@ boundary_surfs=(
 )
 
 filled_files=(
-    "${fs_subj_dir}/${subj_id}/laynii/lh_white_expand_filled_csfb.nii.gz"
-    "${fs_subj_dir}/${subj_id}/laynii/rh_white_expand_filled_csfb.nii.gz"
-    "${fs_subj_dir}/${subj_id}/laynii/lh_white_expand_filled_ogmb.nii.gz"
-    "${fs_subj_dir}/${subj_id}/laynii/rh_white_expand_filled_ogmb.nii.gz"
+    "${fs_subj_dir}/${subj_id}/laynii/lh_pial_expand_filled_csfb.nii.gz"
+    "${fs_subj_dir}/${subj_id}/laynii/rh_pial_expand_filled_csfb.nii.gz"
+    "${fs_subj_dir}/${subj_id}/laynii/lh_pial_expand_filled_ogmb.nii.gz"
+    "${fs_subj_dir}/${subj_id}/laynii/rh_pial_expand_filled_ogmb.nii.gz"
     "${fs_subj_dir}/${subj_id}/laynii/lh_white_shrink_filled_wmb.nii.gz"
     "${fs_subj_dir}/${subj_id}/laynii/rh_white_shrink_filled_wmb.nii.gz"
     "${fs_subj_dir}/${subj_id}/laynii/lh_white_shrink_filled_igmb.nii.gz"
@@ -246,7 +248,7 @@ for ((i = 0; i < ${#boundary_surfs[@]}; i++)); do
     fi
 done
 
-echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/?h.white_expand_filled files.""
+echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/*_expand_filled files.""
 end_time=$(date +%s)
 echo "      Finished in $((end_time - start_time)) seconds"
 
@@ -255,7 +257,7 @@ start_time=$(date +%s)
 for hemi in {lh,rh}; do
     if [[ ! -f "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_csfb.nii.gz" ]]; then
         # Calculate LAYNII_CSF
-        fscalc "${fs_subj_dir}/${subj_id}/laynii/${hemi}_white_expand_filled_csfb.nii.gz" sub "${fs_subj_dir}/${subj_id}/laynii/${hemi}_white_expand_filled_ogmb.nii.gz" mul 1 --o "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_csfb.nii.gz" >/dev/null 2>&1
+        fscalc "${fs_subj_dir}/${subj_id}/laynii/${hemi}_pial_expand_filled_csfb.nii.gz" sub "${fs_subj_dir}/${subj_id}/laynii/${hemi}_pial_expand_filled_ogmb.nii.gz" mul 1 --o "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_csfb.nii.gz" >/dev/null 2>&1
     fi
     if [[ ! -f "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_wmb.nii.gz" ]]; then
         # Calculate LAYNII_WM
@@ -263,7 +265,7 @@ for hemi in {lh,rh}; do
     fi
     if [[ ! -f "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_gm_ribbon.nii.gz" ]]; then
         # Calculate LAYNII_GM ribbon
-        fscalc "${fs_subj_dir}/${subj_id}/laynii/${hemi}_white_expand_filled_ogmb.nii.gz" sub "${fs_subj_dir}/${subj_id}/laynii/${hemi}_white_shrink_filled_igmb.nii.gz" mul 3 --o "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_gm_ribbon.nii.gz" >/dev/null 2>&1
+        fscalc "${fs_subj_dir}/${subj_id}/laynii/${hemi}_pial_expand_filled_ogmb.nii.gz" sub "${fs_subj_dir}/${subj_id}/laynii/${hemi}_white_shrink_filled_igmb.nii.gz" mul 3 --o "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_gm_ribbon.nii.gz" >/dev/null 2>&1
     fi
     if [[ ! -f "${fs_subj_dir}/${subj_id}/laynii/${hemi}_laynii_rim.nii.gz" ]]; then
         # Calculate LAYNII_LH_RIM by adding LAYNII_GM, LAYNII_WM, and LAYNII_CSF
