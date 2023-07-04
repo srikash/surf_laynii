@@ -163,7 +163,7 @@ for hemi in {lh,rh}; do
 
     white_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.white"
 
-    pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.white"
+    pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.pial"
 
     csfb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.pial_expand_csfb"
 
