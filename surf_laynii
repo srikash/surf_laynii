@@ -428,9 +428,11 @@ rm -rf tmp.*
 
 if [[ "$laynii_status" = "yes" ]]; then
     echo " ++++ Running LAYNII now"
-    echo "   -> More patience .... "
     start_time=$(date +%s)
     if [[ "$model" = "v" ]]; then
+        echo "   -> Using equivolume model. "
+        echo "   -> Estimating $layers layers."
+        echo "   -> More patience .... "
 
         for hemi in {lh,rh}; do
 
@@ -453,6 +455,9 @@ if [[ "$laynii_status" = "yes" ]]; then
             -incl_borders >/dev/null 2>&1
 
     elif [[ "$model" = "d" ]]; then
+        echo "   -> Using equidistance model. "
+        echo "   -> Estimating $layers layers."
+        echo "   -> More patience .... "
 
         for hemi in {lh,rh}; do
 
