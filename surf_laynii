@@ -7,34 +7,64 @@ normal=$(tput sgr0)
 function Help() {
     cat <<HELP
 
-Usage:
+Basic usage:
 
-$(basename $0) ${bold}-d${normal} Subjects Directory ${bold} ${bold}-s${normal} Subject ID ${bold} -n${normal} Resolution ${bold}-p${normal} Expand factor ${bold}-m${normal} Shrink factor
-
---------------------------------------------------------------------------------
-Input arguments:
-
-    -d: Subjects Directory (Specify as /path/to/data/subjects. Required.)
-
-    -s: Subject ID (Specify as subjx. Required.)
-
-    -n: Resolution in mm (Specify as float. 0.3 (default). )
-
-    -p: Expand factor (Specify a positive value. 0.2 (default).)
-
-    -m: Shrink factor (Specify a negative value. -0.4 (default).)
-
-    -l: Do not run LAYNII (Stops after making rim files.)
+$(basename $0) ${bold}-d${normal} Subjects directory ${bold} ${bold}-s${normal} Subject ID
 
 --------------------------------------------------------------------------------
+Required input arguments:
 
-This command creates the all the intermediate surfaces and files needed to obtain rim files 
-that are LAYNII compatible. Also, runs LAYNII equivolumnar layering (manual switch off). 
+    -d: Subjects directory (Specify as /path/to/data/subjects)
+
+    -s: Subject ID (Specify as subjx)
+
+Optional input arguments:
+
+    -m: Metric to use (Specify as "t" for thickness or "d" for distance) Default = d
+
+    -r: Resolution in mm (Specify as float) Default = 0.3
+
+    -p: Pial expand factor (Specify a positive value) Default = 0.3
+
+    -w: White shrink factor (Specify a negative value) Default = -0.3
+
+    -n: Number of layers (Specify a postive (odd) integer) Default = 11
+
+    -x: Layering model (Specify as "d" for equidistance or "v" for equivolume) Default = v
+
+    -l: Do NOT execute LAYNII (Specify as 0) Default = 1
+
+--------------------------------------------------------------------------------
+
+Expanded usage:
+
+$(basename $0) ${bold}-d${normal} Subjects directory ${bold} ${bold}-s${normal} Subject ID ${bold} -r${normal} Resolution ${bold}-p${normal} Pial expand factor ${bold}-w${normal} White shrink factor ${bold}-m${normal} Metric preference ${bold}-n${normal} Number of layers ${bold}-x${normal} Layering model ${bold}-l${normal} No LAYNII 
+
+--------------------------------------------------------------------------------
+
+Example 1: (a) Typical, default use case
+Create all intermediate surfaces and files needed to obtain rim files 
+that are LAYNII compatible and run LAYNII equivolumnar layering. 
+
+$(basename $0) -d /path/to/reconned_subjects -s subjx
+
+           (b) Typical, default use case without LAYNII
+Same as Ex. 1a but DO NOT run LAYNII. 
+
+$(basename $0) -d /path/to/reconned_subjects -s subjx -l 0
+
+Example 2:     Same as Ex. 1a but get 21 equidistant layers
+
+$(basename $0) -d /path/to/reconned_subjects -s subjx -x d -n 21
+
+Example 3:     Command with custom resolution, distance factors and layers
+
+$(basename $0) -d /path/to/reconned_subjects -s subjx -r 0.25 -p 0.5 -w -0.5 -n 21
 
 --------------------------------------------------------------------------------
 Script was created by: Sriranga Kashyap (06-2023)
 --------------------------------------------------------------------------------
-Requires Freesurfer & LAYNII to be installed & defined in your environment.
+Only requires Freesurfer & LAYNII to be installed & defined in your environment.
 --------------------------------------------------------------------------------
 Freesufer can be downloaded here: https://surfer.nmr.mgh.harvard.edu/fswiki/DownloadAndInstall
 LAYNII can be downloaded here: https://github.com/layerfMRI/LAYNII
@@ -58,7 +88,7 @@ function reportParameters() {
     SUBJECTS_DIR is $fs_subj_dir
 
     Subject ID         : ${bold} ${subj_id} ${normal}
-    New resolution     : ${bold} ${newvox} mm iso ${normal}
+    Resolution         : ${bold} ${newvox} mm iso ${normal}
     Expand factor      : ${bold} ${expand_factor} ${normal}
     Shrink factor      : ${bold} ${shrink_factor} ${normal}
     Run LAYNII         : ${bold} ${laynii_status} ${normal}
@@ -74,11 +104,14 @@ fi
 
 # DEFAULTS
 newvox=0.3
-expand_factor=0.2
-shrink_factor=-0.4
+metric=d
+expand_factor=0.3
+shrink_factor=-0.3
+layers=11
+model=v
 
 # PARSE INPUT ARGUMENTS
-while getopts "d:s:n:p:m:l:" OPT; do
+while getopts "d:s:m:r:p:w:n:x:l:" OPT; do
     case $OPT in
     h) #help
         Help
@@ -90,14 +123,23 @@ while getopts "d:s:n:p:m:l:" OPT; do
     s) # subject id
         subj_id=$OPTARG
         ;;
-    n) # voxel resolution in mm
+    r) # voxel resolution in mm
         newvox=$OPTARG
+        ;;
+    m) # metric use
+        metric=$OPTARG
         ;;
     p) # expand factor
         expand_factor=$OPTARG
         ;;
-    m) # shrink factor
+    w) # shrink factor
         shrink_factor=$OPTARG
+        ;;
+    n) # layer number
+        layers=$OPTARG
+        ;;
+    x) # layer model
+        model=$OPTARG
         ;;
     l) # stop Laynii
         stop_laynii=$OPTARG
@@ -120,7 +162,7 @@ start_time0=$(date +%s)
 export SUBJECTS_DIR=$fs_subj_dir
 
 # Check LAYNII execution status
-if [[ -z "$stop_laynii" ]]; then
+if [[ -z "$stop_laynii" || "$stop_laynii" = "0" ]]; then
     laynii_status="yes"
 else
     laynii_status="no"
