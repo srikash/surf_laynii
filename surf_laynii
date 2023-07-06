@@ -355,11 +355,16 @@ for ((i = 0; i < ${#boundary_surfs[@]}; i++)); do
 
     if [[ ! -f "$output_file" ]]; then
         # Run mris_fill command
+        start_time=$(date +%s)
         mris_fill \
             -t "$brain_finalsurfs_upsampled" \
             -r "$newvox" \
             "$input_file" \
             "$output_file" >/dev/null 2>&1
+        echo "   -> Generated "$output_file""
+        end_time=$(date +%s)
+        echo "      Finished in $((end_time - start_time)) seconds"
+
     fi
 done
 
@@ -474,6 +479,6 @@ echo "      Finished in $((end_time - start_time)) seconds"
 
 echo " "
 echo "--------------------------------------------------------"
-echo "            Finished in $((end_time - start_time0)) seconds     "
+echo "      surf_laynii finished in $((end_time - start_time0)) seconds     "
 echo "--------------------------------------------------------"
 echo " "
