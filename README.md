@@ -1,4 +1,4 @@
-# surf_laynii
+# surf_laynii [![DOI](https://zenodo.org/badge/656805199.svg)](https://zenodo.org/badge/latestdoi/656805199)
 Script that enables LAYNII layering using Freesurfer segmentations
 You may need to run `chmod +x surf_laynii` to make it an executable.
 
