@@ -222,6 +222,13 @@ for hemi in {lh,rh}; do
 
     if [[ "$metric" = "t" ]]; then
 
+        if [[ ! -f "${pial_surf}" ]]; then
+            pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.pial.T2"
+            if [[ ! -f "${pial_surf}" ]]; then
+                pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.pial.T1"
+            fi
+        fi
+
         if [[ ! -f "${csfb_surf}" ]]; then
             # Run mris_expand for each input file
             start_time=$(date +%s)
@@ -276,6 +283,13 @@ for hemi in {lh,rh}; do
         fi
 
     elif [[ -z "$metric" || "$metric" = "d" ]]; then
+
+        if [[ ! -f "${pial_surf}" ]]; then
+            pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.pial.T2"
+            if [[ ! -f "${pial_surf}" ]]; then
+                pial_surf="${fs_subj_dir}/${subj_id}/surf/${hemi}.pial.T1"
+            fi
+        fi
 
         if [[ ! -f "${csfb_surf}" ]]; then
             # Run mris_expand for each input file
