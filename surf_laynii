@@ -219,6 +219,7 @@ for hemi in {lh,rh}; do
     wmb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_shrink_wmb"
 
     igmb_surf="${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_shrink_igmb"
+
     if [[ "$metric" = "t" ]]; then
 
         if [[ ! -f "${csfb_surf}" ]]; then
@@ -305,7 +306,7 @@ for hemi in {lh,rh}; do
                 "$white_surf" \
                 $shrink_factor \
                 "$wmb_surf" >/dev/null 2>&1
-            echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_wmb""
+            echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_shrink_wmb""
             end_time=$(date +%s)
             echo "      Finished in $((end_time - start_time)) seconds"
 
@@ -316,7 +317,7 @@ for hemi in {lh,rh}; do
             cp \
                 "$white_surf" \
                 "$igmb_surf" >/dev/null 2>&1
-            echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_expand_igmb""
+            echo "   -> Generated "${fs_subj_dir}/${subj_id}/laynii/${hemi}.white_shrink_igmb""
             end_time=$(date +%s)
             echo "      Finished in $((end_time - start_time)) seconds"
         fi
